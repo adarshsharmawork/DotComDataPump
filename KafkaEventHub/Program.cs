@@ -8,8 +8,9 @@ namespace KafkaEventHub
 
         public static void Main(string[] args)
         {
-            string brokerList = "adarsheventhub.servicebus.windows.net:9093";
-            string connectionString = "Endpoint=sb://adarsheventhub.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=Nmp7UQTi+vkY0WYJcfE5PfFlYronWPy6v0QmYHXQ+Ro=";
+            string brokerList = "gntsearchmessaging.servicebus.windows.net:9093"; //adarsheventhub.servicebus.windows.net:9093
+            string connectionString = "Endpoint=sb://gntsearchmessaging.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=9grYzEo2TusIpguLcD/yJv7vHCfS8uIzmMGZB7CMTmA=";
+                                      //Endpoint=sb://adarsheventhub.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=Nmp7UQTi+vkY0WYJcfE5PfFlYronWPy6v0QmYHXQ+Ro=
             string topic = "test";
             string caCertLocation = V;
             string consumerGroup = "TestGroup";
