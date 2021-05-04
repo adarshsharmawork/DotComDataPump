@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
+using KafkaEventHub.Model;
+using Newtonsoft.Json;
 
 namespace KafkaEventHub
 {
@@ -24,9 +27,49 @@ namespace KafkaEventHub
                 using (var producer = new ProducerBuilder<long, string>(config).SetKeySerializer(Serializers.Int64).SetValueSerializer(Serializers.Utf8).Build())
                 {
                     Console.WriteLine("Sending 10 messages to topic: " + topic + ", broker(s): " + brokerList);
+
+                    //Data Creation
+                    CatalogAvailability availability = new CatalogAvailability
+                    {
+                        UW = "Yes"
+                    };
+
+                    List<string> CategoryList = new List<string>
+                    {
+                        "Cat1", "Cat2", "Cat3", "Cat4"
+                    };
+
+                    CatalogContractPrices contractPrices = new CatalogContractPrices
+                    {
+
+                        ContractA = "Yes",
+                        ContractC = "C",
+                        ContractCategoryA = "CatA"
+                    };
+
+                    CatalogVisibility visibility = new CatalogVisibility
+                    {
+                        ContractA = "A level Visibility",
+                        ContractC = "C Visible",
+                        Default = "true"
+                    };
+
+                    CatalogFields fields = new CatalogFields {
+                        Availability = availability, Brand = "New", CategoryEn = CategoryList, CategoryFr = CategoryList,
+                        ContractPrices = contractPrices,NetPrice = "20.2", ProductID = "99115", SaleRank = "First",
+                        TitleEn = "Good Product", TitleFr = "French Product", Visibility = visibility
+                    };
+
+                    CatalogModel catalogModel = new CatalogModel
+                    {
+                        Fields = fields
+                    };
+
+                    var CatalogJsonString = JsonConvert.SerializeObject(catalogModel);
+
                     for (int x = 0; x < 10; x++)
                     {
-                        var msg = string.Format("Sample message #{0} sent at {1}", x, DateTime.Now.ToString("yyyy-MM-dd_HH:mm:ss.ffff"));
+                        var msg = string.Format("Sample Catalog #{0} sent at {1}", CatalogJsonString, DateTime.Now.ToString("yyyy-MM-dd_HH:mm:ss.ffff"));
                         var deliveryReport = await producer.ProduceAsync(topic, new Message<long, string> { Key = DateTime.UtcNow.Ticks, Value = msg });
                         Console.WriteLine(string.Format("Message {0} sent (value: '{1}')", x, msg));
                     }
@@ -40,6 +83,7 @@ namespace KafkaEventHub
 
         public static void Consumer(string brokerList, string connStr, string consumergroup, string topic, string cacertlocation)
         {
+            List<Task> tasks = new List<Task>();
             var config = new ConsumerConfig
             {
                 BootstrapServers = brokerList,
